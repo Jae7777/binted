@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://mvvmloe0cgfl"]
+
+[ext_resource type="PackedScene" uid="uid://cc7r5l8od4ine" path="res://assets/craft_speeder_a.glb" id="1_db6dy"]
+[ext_resource type="Script" uid="uid://bbt2lmoa8lrkf" path="res://scripts/spacecraft_base_stats.gd" id="2_slahh"]
+[ext_resource type="Script" uid="uid://dhjyl2ej640us" path="res://scripts/spacecraft_runtime_stats.gd" id="2_wmolo"]
+
+[sub_resource type="Resource" id="Resource_wmolo"]
+script = ExtResource("2_slahh")
+pitch_speed = 0.5
+yaw_speed = 0.5
+roll_speed = 0.5
+metadata/_custom_type_script = "uid://bbt2lmoa8lrkf"
+
+[node name="SpacecraftSpeederA" unique_id=1469786338 instance=ExtResource("1_db6dy")]
+
+[node name="craft_speederA" parent="." index="0" unique_id=74680452]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="RuntimeStats" type="Node" parent="." index="1" unique_id=1289617162]
+script = ExtResource("2_wmolo")
+base_stats = SubResource("Resource_wmolo")
