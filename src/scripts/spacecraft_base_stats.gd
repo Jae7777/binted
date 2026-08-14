@@ -31,7 +31,7 @@ class_name SpacecraftBaseStats
 ## Constant idle jitter of the hull, in radians. 0 disables idle shake.
 @export var shake_amount: float = 0.003
 ## Extra jitter added in proportion to how hard the ship is turning.
-@export var shake_from_turn: float = 0.02
+@export var shake_from_turn: float = 0.005
 
 @export_group("Durability")
 @export var base_health: int = 100

@@ -4,6 +4,9 @@
 [ext_resource type="Script" uid="uid://cw8qut2vyu5qw" path="res://scripts/spacecraft_controller.gd" id="3_ctrl"]
 [ext_resource type="Script" uid="uid://bhdlpplmuym51" path="res://scripts/input_controller.gd" id="4_input"]
 [ext_resource type="Script" uid="uid://doijh17joe8fq" path="res://scripts/camera_rig.gd" id="5_cam"]
+[ext_resource type="Texture2D" uid="uid://cv7pryt44p8nh" path="res://assets/ui/circle.svg" id="5_mxi64"]
+[ext_resource type="Script" uid="uid://1uf35gv2rvrk" path="res://scripts/crosshair.gd" id="6_cross"]
+[ext_resource type="Texture2D" uid="uid://bcmq0a561b2rl" path="res://assets/ui/dot.svg" id="7_yceh7"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_78kdj"]
 radius = 0.3720703
@@ -32,6 +35,48 @@ transform = Transform3D(1, 0, 0, 0, 0.98894, -0.14834, 0, 0.14834, 0.98894, 0, 3
 current = true
 script = ExtResource("5_cam")
 target = NodePath("../Spacecraft")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=537817718]
+
+[node name="CrosshairUI" type="Control" parent="CanvasLayer" unique_id=1156806696 node_paths=PackedStringArray("camera", "ship", "dot", "center_crosshair")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("6_cross")
+camera = NodePath("../../Camera3D")
+ship = NodePath("../../Spacecraft")
+dot = NodePath("Dot")
+center_crosshair = NodePath("CenterContainer/TextureRect")
+
+[node name="CenterContainer" type="CenterContainer" parent="CanvasLayer/CrosshairUI" unique_id=810140975]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/CrosshairUI/CenterContainer" unique_id=2042799857]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = ExtResource("5_mxi64")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Dot" type="TextureRect" parent="CanvasLayer/CrosshairUI" unique_id=771903482]
+modulate = Color(1, 1, 1, 0.75)
+custom_minimum_size = Vector2(8, 8)
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+mouse_filter = 2
+texture = ExtResource("7_yceh7")
+expand_mode = 1
+stretch_mode = 5
 
 [connection signal="pitch_input" from="InputController" to="Spacecraft" method="_on_pitch_input"]
 [connection signal="roll_input" from="InputController" to="Spacecraft" method="_on_roll_input"]
