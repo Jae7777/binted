@@ -34,7 +34,6 @@ class_name Crosshair
 ## Pixel radius that counts as "on target". 0 = use the reticle's own radius.
 @export var lock_radius: float = 0.0
 
-
 func _process(_delta: float) -> void:
 	if camera == null or ship == null or dot == null:
 		return

@@ -1,7 +1,0 @@
-[gd_resource type="Resource" script_class="SpacecraftBaseStats" format=3 uid="uid://csnnn2oronc30"]
-
-[ext_resource type="Script" uid="uid://bbt2lmoa8lrkf" path="res://scripts/spacecraft_base_stats.gd" id="1_bfpsc"]
-
-[resource]
-script = ExtResource("1_bfpsc")
-metadata/_custom_type_script = "uid://bbt2lmoa8lrkf"

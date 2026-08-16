@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://cc7r5l8od4ine"
-path="res://.godot/imported/craft_speeder_a.glb-b9fad02b69aee90c946b762811ed36dc.scn"
+uid="uid://bk1f2jhgqkpa8"
+path="res://.godot/imported/groza.glb-ec321c3af02b736e07f0c048c4b2e50b.scn"
 
 [deps]
 
-source_file="res://assets/craft_speeder_a.glb"
-dest_files=["res://.godot/imported/craft_speeder_a.glb-b9fad02b69aee90c946b762811ed36dc.scn"]
+source_file="res://assets/ships/groza/groza.glb"
+dest_files=["res://.godot/imported/groza.glb-ec321c3af02b736e07f0c048c4b2e50b.scn"]
 
 [params]
 

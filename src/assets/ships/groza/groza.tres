@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="SpacecraftBaseStats" format=3 uid="uid://bqtifnxrnrab"]
+
+[ext_resource type="Script" uid="uid://bbt2lmoa8lrkf" path="res://scripts/spacecraft_base_stats.gd" id="1_ly4og"]
+
+[resource]
+script = ExtResource("1_ly4og")
+acceleration = 10.0
+metadata/_custom_type_script = "uid://bbt2lmoa8lrkf"

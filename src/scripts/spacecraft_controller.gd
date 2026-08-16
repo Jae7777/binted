@@ -1,4 +1,4 @@
-extends CharacterBody3D
+extends Node3D
 class_name SpacecraftController
 
 ## The mediator between input and stats, and the source of two orientations:
@@ -12,6 +12,7 @@ class_name SpacecraftController
 ## Runtime stats for this craft (seeded from the base .tres). Assign in the
 ## Inspector; the node lives inside the craft sub-scene.
 @export var runtime_stats: StatefulStats
+@export var body: CharacterBody3D
 
 # --- Aim (instant target, driven by the mouse) ---
 var aim_yaw: float = 0.0
@@ -85,8 +86,17 @@ func _apply_attitude(base: SpacecraftBaseStats, _delta: float) -> void:
 
 func _apply_thrust(_base: SpacecraftBaseStats, delta: float) -> void:
 	runtime_stats.apply_throttle(_throttle, _turbo, delta)
-	velocity = -global_transform.basis.z * runtime_stats.current_speed
-	move_and_slide()
+
+	# The Body (CharacterBody3D) resolves collisions, but only IT moves when we
+	# call move_and_slide -- and the visual mesh lives on the Spacecraft, not the
+	# body. So: let the body slide, carry the whole ship by however far it moved,
+	# then re-seat the body at its rest offset so it doesn't drift away.
+	var rest_offset := body.global_position - global_position
+	var before := body.global_position
+	body.velocity = -global_transform.basis.z * runtime_stats.current_speed
+	body.move_and_slide()
+	global_position += body.global_position - before
+	body.global_position = global_position + rest_offset
 
 
 ## Orientation used by both the ship and the camera so they stay consistent.
@@ -109,22 +119,21 @@ func get_aim_basis() -> Basis:
 func get_turn_speed() -> float:
 	return Vector2(_yaw_vel, _pitch_vel).length()
 
-
-func _on_pitch_input(value: float) -> void:
+func _on_input_controller_pitch_input(value: float) -> void:
 	_pitch_delta += value
 
 
-func _on_yaw_input(value: float) -> void:
-	_yaw_delta += value
-
-
-func _on_roll_input(value: float) -> void:
+func _on_input_controller_roll_input(value: float) -> void:
 	_roll_input = value
 
 
-func _on_throttle_input(value: float) -> void:
+func _on_input_controller_throttle_input(value: float) -> void:
 	_throttle = value
 
 
-func _on_turbo_changed(active: bool) -> void:
+func _on_input_controller_turbo_changed(active: bool) -> void:
 	_turbo = active
+
+
+func _on_input_controller_yaw_input(value: float) -> void:
+	_yaw_delta += value

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://csn7rtpkn7i2n"]
 
-[ext_resource type="PackedScene" uid="uid://mvvmloe0cgfl" path="res://assets/craft_speeder_a.tscn" id="1_3mip4"]
+[ext_resource type="PackedScene" uid="uid://c82oo066v72g0" path="res://assets/ships/groza/groza.tscn" id="2_yceh7"]
 [ext_resource type="Script" uid="uid://cw8qut2vyu5qw" path="res://scripts/spacecraft_controller.gd" id="3_ctrl"]
 [ext_resource type="Script" uid="uid://bhdlpplmuym51" path="res://scripts/input_controller.gd" id="4_input"]
 [ext_resource type="Script" uid="uid://doijh17joe8fq" path="res://scripts/camera_rig.gd" id="5_cam"]
@@ -8,21 +8,14 @@
 [ext_resource type="Script" uid="uid://1uf35gv2rvrk" path="res://scripts/crosshair.gd" id="6_cross"]
 [ext_resource type="Texture2D" uid="uid://bcmq0a561b2rl" path="res://assets/ui/dot.svg" id="7_yceh7"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_78kdj"]
-radius = 0.3720703
-height = 2.149414
-
 [node name="Player" type="Node3D" unique_id=759221089]
 
-[node name="Spacecraft" type="CharacterBody3D" parent="." unique_id=765618548 node_paths=PackedStringArray("runtime_stats")]
+[node name="Spacecraft" type="Node3D" parent="." unique_id=1545159733 node_paths=PackedStringArray("runtime_stats", "body")]
 script = ExtResource("3_ctrl")
-runtime_stats = NodePath("craft_speeder_a/RuntimeStats")
+runtime_stats = NodePath("Groza/RuntimeStats")
+body = NodePath("Groza/Body")
 
-[node name="craft_speeder_a" parent="Spacecraft" unique_id=1469786338 instance=ExtResource("1_3mip4")]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Spacecraft" unique_id=259292916]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.36850822, 0)
-shape = SubResource("CapsuleShape3D_78kdj")
+[node name="Groza" parent="Spacecraft" unique_id=726696384 instance=ExtResource("2_yceh7")]
 
 [node name="InputController" type="Node" parent="." unique_id=182834421]
 script = ExtResource("4_input")
@@ -78,8 +71,8 @@ texture = ExtResource("7_yceh7")
 expand_mode = 1
 stretch_mode = 5
 
-[connection signal="pitch_input" from="InputController" to="Spacecraft" method="_on_pitch_input"]
-[connection signal="roll_input" from="InputController" to="Spacecraft" method="_on_roll_input"]
-[connection signal="throttle_input" from="InputController" to="Spacecraft" method="_on_throttle_input"]
-[connection signal="turbo_changed" from="InputController" to="Spacecraft" method="_on_turbo_changed"]
-[connection signal="yaw_input" from="InputController" to="Spacecraft" method="_on_yaw_input"]
+[connection signal="pitch_input" from="InputController" to="Spacecraft" method="_on_input_controller_pitch_input"]
+[connection signal="roll_input" from="InputController" to="Spacecraft" method="_on_input_controller_roll_input"]
+[connection signal="throttle_input" from="InputController" to="Spacecraft" method="_on_input_controller_throttle_input"]
+[connection signal="turbo_changed" from="InputController" to="Spacecraft" method="_on_input_controller_turbo_changed"]
+[connection signal="yaw_input" from="InputController" to="Spacecraft" method="_on_input_controller_yaw_input"]
