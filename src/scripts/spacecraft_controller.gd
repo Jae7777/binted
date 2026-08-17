@@ -11,7 +11,7 @@ class_name SpacecraftController
 
 ## Runtime stats for this craft (seeded from the base .tres). Assign in the
 ## Inspector; the node lives inside the craft sub-scene.
-@export var runtime_stats: StatefulStats
+@export var runtime_stats: RuntimeStats
 @export var body: CharacterBody3D
 
 # --- Aim (instant target, driven by the mouse) ---

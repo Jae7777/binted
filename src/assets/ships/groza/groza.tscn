@@ -3,6 +3,8 @@
 [ext_resource type="PackedScene" uid="uid://bk1f2jhgqkpa8" path="res://assets/ships/groza/groza.glb" id="1_q0kpd"]
 [ext_resource type="Script" uid="uid://dhjyl2ej640us" path="res://scripts/spacecraft_runtime_stats.gd" id="2_aadyv"]
 [ext_resource type="Resource" uid="uid://bqtifnxrnrab" path="res://assets/ships/groza/groza.tres" id="3_mhh0p"]
+[ext_resource type="Script" uid="uid://btvm4iqkp3bx6" path="res://scripts/jet_flame.gd" id="4_m7ejn"]
+[ext_resource type="Texture2D" uid="uid://c6e3f1aph1s8x" path="res://assets/vfx/t_fire01.png" id="4_ptg1r"]
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_mhh0p"]
 points = PackedVector3Array(7.3226156, -4.459447, 0.76440156, 2.7459812, -3.7730188, 0.535525, 3.0532484, -3.6654994, 0.71831596, 2.9749026, 0.11694145, 0.077973574, 6.1784573, -5.3744826, 0.077973574, 2.7459812, 0.11694145, 0.76440156, 6.864325, -6.0615153, 0.76440156, 7.3226156, -4.230234, 0.3067829, 3.6616664, -4.230234, 0.077973574, 6.1784573, -3.0859861, 0.077973574, 7.3226156, -6.0615153, 0.3067829, 2.9749026, 0.11694145, 0.76440156, 2.7459812, 0.11694145, 0.077973574, 3.4327452, -4.230234, 0.76440156, 2.9868705, -3.483643, 0.11410342, 6.864325, -6.0615153, 0.3067829, 7.3226156, -6.0615153, 0.76440156, 5.4912453, -2.4007676, 0.76440156, 4.806273, -4.916662, 0.077973574, 5.4912453, -5.3744826, 0.535525, 7.3226156, -4.230234, 0.535525, 3.4327452, -4.230234, 0.535525, 5.7206144, -5.3744826, 0.077973574, 5.4912453, -5.3744826, 0.76440156, 5.949536, -5.6030903, 0.3067829)
@@ -15,6 +17,99 @@ points = PackedVector3Array(0.9150357, 6.5233345, -0.37966755, -2.0594857, -3.08
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_mymw7"]
 points = PackedVector3Array(-2.369015, -3.248061, 0.6973234, -7.3226156, -6.0615153, 0.30667087, -7.3226156, -6.0615153, 0.76440156, -2.517955, 0.574605, -0.15072381, -2.0605156, -3.0857844, -0.37975717, -2.0605156, 0.574605, 0.76440156, -7.3226156, -4.230346, 0.30667087, -2.2892354, 0.574605, -0.37975717, -4.1195087, -1.027262, 0.76440156, -5.491312, -5.3749084, 0.76440156, -7.3226156, -4.4589987, 0.76440156, -6.1779866, -5.3749084, 0.07808552, -2.0605156, -3.3150866, 0.30667087, -4.805153, -4.9169536, 0.07808552, -6.1779866, -3.0857844, 0.07808552, -2.0605156, 0.574605, -0.37975717, -2.746675, 0.34530282, 0.76440156, -6.8641458, -6.0615153, 0.30667087, -2.2892354, -3.543739, 0.5353682, -2.2892354, -3.0857844, -0.37975717, -7.3226156, -4.230346, 0.5353682, -6.8641458, -6.0615153, 0.76440156, -5.7200317, -5.3749084, 0.07808552, -5.491312, -5.3749084, 0.5353682, -2.517955, 0.574605, 0.30667087, -2.517955, -3.543739, 0.07808552, -2.2892354, 0.574605, 0.76440156, -5.9487514, -5.602911, 0.30667087)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_co701"]
+transparency = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+vertex_color_is_srgb = true
+albedo_texture = ExtResource("4_ptg1r")
+albedo_texture_force_srgb = true
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="Curve" id="Curve_m7ejn"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.6367925, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_ptg1r"]
+curve = SubResource("Curve_m7ejn")
+
+[sub_resource type="Gradient" id="Gradient_ptg1r"]
+colors = PackedColorArray(1, 1, 1, 1, 0.31431612, 0.31431612, 0.31431603, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ptg1r"]
+gradient = SubResource("Gradient_ptg1r")
+
+[sub_resource type="Curve" id="Curve_ptg1r"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.00707547, 0.5087719), 0.0, 0.0, 0, 0, Vector2(0.13207546, 0.74269), 1.1020148, 1.1020148, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_78kdj"]
+width = 561
+curve = SubResource("Curve_ptg1r")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_a1vwt"]
+lifetime_randomness = 0.08
+particle_flag_rotate_y = true
+angle_min = -179.99998
+angle_max = 180.00002
+direction = Vector3(0, 0, -1)
+spread = 36.915
+initial_velocity_min = 1.5
+initial_velocity_max = 2.5
+radial_velocity_min = -2.2351742e-05
+radial_velocity_max = 0.49997765
+gravity = Vector3(0, 0, 4)
+scale_min = 0.0
+scale_max = 0.0
+scale_curve = SubResource("CurveTexture_78kdj")
+color = Color(1.5409986, 1.3452219, 0.9386757, 1)
+color_ramp = SubResource("GradientTexture1D_ptg1r")
+alpha_curve = SubResource("CurveTexture_ptg1r")
+
+[sub_resource type="QuadMesh" id="QuadMesh_wglno"]
+size = Vector2(1.5, 1.5)
+
+[sub_resource type="Animation" id="Animation_ptg1r"]
+resource_name = "Init"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("OmniLight3D:light_energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.26666668, 0.5, 0.96666664, 1.2, 1.444247, 1.7000718, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [8.379, 12.456, 8.312, 12.456, 10.157, 12.801, 11.202, 8.887]
+}
+
+[sub_resource type="Animation" id="Animation_m7ejn"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("OmniLight3D:light_energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [6.982]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_mymw7"]
+_data = {
+&"Init": SubResource("Animation_ptg1r"),
+&"RESET": SubResource("Animation_m7ejn")
+}
 
 [node name="Groza" unique_id=726696384 instance=ExtResource("1_q0kpd")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, 0)
@@ -40,3 +135,27 @@ shape = SubResource("ConvexPolygonShape3D_mymw7")
 [node name="RuntimeStats" type="Node" parent="." index="2" unique_id=701423252]
 script = ExtResource("2_aadyv")
 base_stats = ExtResource("3_mhh0p")
+
+[node name="JetFlame" type="Node3D" parent="." index="3" unique_id=1178105368 node_paths=PackedStringArray("runtime_stats", "flames", "light")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.1077194e-07, 0.08125919, -2.41095)
+script = ExtResource("4_m7ejn")
+runtime_stats = NodePath("../RuntimeStats")
+flames = NodePath("Flames")
+light = NodePath("OmniLight3D")
+
+[node name="Flames" type="GPUParticles3D" parent="JetFlame" index="0" unique_id=641170485]
+material_override = SubResource("StandardMaterial3D_co701")
+amount = 90
+lifetime = 0.79
+visibility_aabb = AABB(-2.4996643, -2.627124, -5.0498295, 5.1571684, 5.2138147, 6.548557)
+process_material = SubResource("ParticleProcessMaterial_a1vwt")
+draw_pass_1 = SubResource("QuadMesh_wglno")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="JetFlame" index="1" unique_id=1447806564]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1054938e-08, 0, -0.355227)
+light_color = Color(0.85668075, 0.40626606, 1.92523e-07, 1)
+light_energy = 6.982
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="JetFlame" index="2" unique_id=994249750]
+libraries/ = SubResource("AnimationLibrary_mymw7")
+autoplay = &"Init"

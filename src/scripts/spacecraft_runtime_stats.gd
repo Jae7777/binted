@@ -1,5 +1,5 @@
 extends Node
-class_name StatefulStats
+class_name RuntimeStats
 
 ## Runtime state for one craft (current speed, health, ...). Seeded from a
 ## SpacecraftBaseStats resource and mutated by the controller (player input)
