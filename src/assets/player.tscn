@@ -24,7 +24,7 @@ script = ExtResource("4_input")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.31059802, -1.0709959)
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1826354701 node_paths=PackedStringArray("target")]
-transform = Transform3D(1, 0, 0, 0, 0.98894, -0.14834, 0, 0.14834, 0.98894, 0, 3, 8)
+transform = Transform3D(1, 0, 0, 0, 0.99379253, -0.11124954, 0, 0.11124954, 0.99379253, 0, 3.1031628, 8.763827)
 current = true
 script = ExtResource("5_cam")
 target = NodePath("../Spacecraft")
