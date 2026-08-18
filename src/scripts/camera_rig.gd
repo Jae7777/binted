@@ -193,14 +193,14 @@ func _resolve_collision(pivot: Vector3, cam_pos: Vector3, delta: float) -> Vecto
 ## Merge the AABBs of every visual under the target and return half its longest
 ## axis as a bounding "radius" the framing scales from.
 func _measure_ship_radius() -> float:
-	var to_local := target.global_transform.affine_inverse()
+	var target_to_local := target.global_transform.affine_inverse()
 	var have := false
 	var mn := Vector3.ZERO
 	var mx := Vector3.ZERO
 
 	for node in target.find_children("*", "VisualInstance3D", true, false):
 		var vi := node as VisualInstance3D
-		var xf := to_local * vi.global_transform
+		var xf := target_to_local * vi.global_transform
 		var box := vi.get_aabb()
 		for i in 8:
 			var p := xf * box.get_endpoint(i)
@@ -214,8 +214,8 @@ func _measure_ship_radius() -> float:
 
 	if not have:
 		return 0.0
-	var size := mx - mn
-	return 0.5 * maxf(size.x, maxf(size.y, size.z))
+	var s := mx - mn
+	return 0.5 * maxf(s.x, maxf(s.y, s.z))
 
 
 ## Turn distance_scale into a concrete multiplier. 0 means "reproduce the editor
