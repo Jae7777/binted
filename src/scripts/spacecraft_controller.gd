@@ -14,16 +14,15 @@ class_name SpacecraftController
 @export var runtime_stats: RuntimeStats
 @export var body: CharacterBody3D
 
-# --- Aim (instant target, driven by the mouse) ---
-var aim_yaw: float = 0.0
-var aim_pitch: float = 0.0
+# --- Aim (instant target orientation, driven by the mouse) ---
+## Full body-relative orientation. Yaw/pitch/roll are each integrated in this
+## frame's OWN local axes, so there is no world-up reference and no pitch limit
+## -- true 6DOF. The camera reads this so the view tracks where you point.
+var aim_basis: Basis = Basis()
 
-# --- Ship attitude (spring-chases the aim) ---
-var _yaw: float = 0.0
-var _pitch: float = 0.0
-var _yaw_vel: float = 0.0
-var _pitch_vel: float = 0.0
-var _roll: float = 0.0   ## Integrated manual roll angle (A/D).
+# --- Ship attitude (3D spring-chases the aim) ---
+var _basis: Basis = Basis()           ## Current ship orientation.
+var _ang_vel: Vector3 = Vector3.ZERO  ## Angular velocity (world space) for the spring.
 
 # --- Latest raw input ---
 var _throttle: float = 0.0
@@ -33,54 +32,71 @@ var _pitch_delta: float = 0.0  ## Mouse pitch accumulated since last frame.
 var _yaw_delta: float = 0.0    ## Mouse yaw accumulated since last frame.
 
 
+func _ready() -> void:
+	# Seed both orientations from wherever the craft is placed in the scene.
+	aim_basis = global_transform.basis.orthonormalized()
+	_basis = aim_basis
+
+
 func _physics_process(delta: float) -> void:
 	if runtime_stats == null or runtime_stats.base_stats == null:
 		return
 	var base := runtime_stats.base_stats
 
-	_update_aim(base)
+	_update_aim(base, delta)
 	_chase_aim(base, delta)
 	_apply_attitude(base, delta)
 	_apply_thrust(base, delta)
 
 
-## Fold this frame's mouse motion into the instant aim orientation.
-func _update_aim(base: SpacecraftBaseStats) -> void:
-	aim_yaw += _yaw_delta * base.yaw_speed
-	var max_pitch := deg_to_rad(base.max_pitch_deg)
-	aim_pitch = clampf(aim_pitch + _pitch_delta * base.pitch_speed, -max_pitch, max_pitch)
+## Fold this frame's mouse + roll input into the aim orientation. Each rotation
+## is applied in the aim's OWN local frame, so steering is always relative to
+## where you currently point and how you're banked -- which is exactly what
+## makes roll-then-turn feel natural and removes any need for a pitch clamp or
+## roll compensation. Flip a sign below if an axis feels inverted.
+func _update_aim(base: SpacecraftBaseStats, delta: float) -> void:
+	var yaw := -_yaw_delta * base.yaw_speed
+	var pitch := _pitch_delta * base.pitch_speed
+	var roll := _roll_input * base.roll_speed * delta
+
+	aim_basis = aim_basis * Basis(Vector3.UP, yaw)       # yaw about local up
+	aim_basis = aim_basis * Basis(Vector3.RIGHT, pitch)  # pitch about local right
+	aim_basis = aim_basis * Basis(Vector3.BACK, roll)    # roll about local forward
+	aim_basis = aim_basis.orthonormalized()
+
 	_pitch_delta = 0.0
 	_yaw_delta = 0.0
 
 
-## Spring the ship's yaw/pitch toward the aim. Under-damping produces the
-## overshoot/wobble; a stiffer spring reduces the lag.
+## Spring the ship orientation toward the aim in full 3D. The error between the
+## two orientations is expressed as an axis*angle vector; an under-damped spring
+## on the angular velocity produces the lag and overshoot/wobble in every axis.
 func _chase_aim(base: SpacecraftBaseStats, delta: float) -> void:
-	_yaw_vel += (aim_yaw - _yaw) * base.turn_stiffness * delta
-	_yaw_vel *= exp(-base.turn_damping * delta)
-	_yaw += _yaw_vel * delta
+	var current := _basis.get_rotation_quaternion()
+	var target := aim_basis.get_rotation_quaternion()
+	if current.dot(target) < 0.0:
+		target = -target  # take the shortest rotational path
 
-	_pitch_vel += (aim_pitch - _pitch) * base.turn_stiffness * delta
-	_pitch_vel *= exp(-base.turn_damping * delta)
-	_pitch += _pitch_vel * delta
+	var error := _log_quat(target * current.inverse())
+	_ang_vel += error * base.turn_stiffness * delta
+	_ang_vel *= exp(-base.turn_damping * delta)
 
-	_roll += _roll_input * base.roll_speed * delta
+	current = (_exp_quat(_ang_vel * delta) * current).normalized()
+	_basis = Basis(current)
 
 
-## Build the ship basis from yaw/pitch/roll plus an auto-bank that leans into
-## the turn, and a small hull shake that grows with how hard we're turning.
-## Shake is applied to the SHIP only (not the aim), so the camera stays steady
-## while the craft visibly jitters.
+## Apply the ship orientation plus a small hull shake that grows with how hard
+## we're turning. The shake is a purely local jitter layered on the sprung
+## orientation, so the craft visibly wobbles while the aim target stays clean.
 func _apply_attitude(base: SpacecraftBaseStats, _delta: float) -> void:
-	var bank := clampf(-_yaw_vel * base.bank_amount, -1.0, 1.0)
-
 	var shake := base.shake_amount + base.shake_from_turn * get_turn_speed()
 	var t := Time.get_ticks_msec() / 1000.0
-	var shake_yaw := cos(t * 17.0) * shake
-	var shake_pitch := sin(t * 23.0) * shake
-	var shake_roll := sin(t * 13.0) * shake
-
-	var ship_basis := _orientation(_yaw + shake_yaw, _pitch + shake_pitch, _roll + bank + shake_roll)
+	var jitter := Vector3(
+		sin(t * 23.0) * shake,  # pitch
+		cos(t * 17.0) * shake,  # yaw
+		sin(t * 13.0) * shake,  # roll
+	)
+	var ship_basis := _basis * Basis.from_euler(jitter)
 	global_transform = Transform3D(ship_basis, global_position)
 
 
@@ -99,25 +115,37 @@ func _apply_thrust(_base: SpacecraftBaseStats, delta: float) -> void:
 	body.global_position = global_position + rest_offset
 
 
-## Orientation used by both the ship and the camera so they stay consistent.
-## Signs chosen so mouse-right yaws right and mouse-down pitches the nose down.
-func _orientation(yaw: float, pitch: float, roll: float = 0.0) -> Basis:
-	var b := Basis()
-	b = b.rotated(Vector3.UP, -yaw)
-	b = b.rotated(b.x, pitch)
-	if roll != 0.0:
-		b = b.rotated(b.z, roll)
-	return b
+## Quaternion log: express a rotation as an axis*angle vector (radians), the
+## form the angular spring integrates.
+func _log_quat(q: Quaternion) -> Vector3:
+	q = q.normalized()
+	var w := clampf(q.w, -1.0, 1.0)
+	var s := sqrt(1.0 - w * w)
+	if s < 0.0001:
+		return Vector3.ZERO
+	var angle := 2.0 * acos(w)
+	if angle > PI:
+		angle -= TAU
+	return Vector3(q.x, q.y, q.z) / s * angle
 
 
-## The camera reads this to track exactly where you're aiming.
+## Quaternion exp: turn an axis*angle vector back into a rotation.
+func _exp_quat(v: Vector3) -> Quaternion:
+	var angle := v.length()
+	if angle < 0.0001:
+		return Quaternion.IDENTITY
+	return Quaternion(v / angle, angle)
+
+
+## The camera reads this to track exactly where you're aiming (full orientation,
+## roll included).
 func get_aim_basis() -> Basis:
-	return _orientation(aim_yaw, aim_pitch)
+	return aim_basis
 
 
 ## Magnitude of the current turn (for camera shake scaling, etc.).
 func get_turn_speed() -> float:
-	return Vector2(_yaw_vel, _pitch_vel).length()
+	return _ang_vel.length()
 
 func _on_input_controller_pitch_input(value: float) -> void:
 	_pitch_delta += value
