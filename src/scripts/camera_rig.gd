@@ -53,6 +53,11 @@ class_name CameraRig
 ## Pulling IN is always instant so the camera never clips through geometry.
 @export var collision_return_speed: float = 8.0
 
+@export_group("FOV")
+@export var fov_min: float = 70
+@export var fov_max: float = 110
+@export var fov_default: float = 70
+
 ## Captured editor placement, expressed in the target's local frame.
 var _rig_transform: Transform3D
 var _rig_dir: Vector3          ## Unit direction of the boom, in target space.
@@ -134,6 +139,10 @@ func _physics_process(delta: float) -> void:
 
 	# Orientation snaps instantly so the camera always tracks the aim.
 	global_transform = Transform3D(desired.basis, final_origin)
+	
+	# fov effect
+	var fov_speed_ratio = target.runtime_stats.current_speed / target.runtime_stats.base_stats.max_speed
+	fov = clampf(fov_speed_ratio * (fov_max - fov_min) + fov_default, fov_min, fov_max)
 
 
 ## Desired boom length in metres for the current ship, after the zoom multiplier.
