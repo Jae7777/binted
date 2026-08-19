@@ -6,6 +6,7 @@ class_name InputController
 ## It only reads raw input and emits intent; it owns no global state. Whether
 ## it should act at all is decided by the global GameState context.
 
+signal camera_zoom_input(value: float)
 signal pitch_input(value: float)
 signal yaw_input(value: float)
 signal roll_input(value: float)
@@ -16,6 +17,7 @@ signal turbo_changed(active: bool)
 @export var mouse_sensitivity: float = 0.008
 @export var invert_pitch: bool = true
 @export var invert_yaw: bool = false
+@export var zoom_step: float = 0.1
 
 var _turbo_active: bool = false
 
@@ -23,14 +25,21 @@ var _turbo_active: bool = false
 func _unhandled_input(event: InputEvent) -> void:
 	if not GameState.is_gameplay():
 		return
-
+	
 	if event is InputEventMouseMotion:
 		var motion := event as InputEventMouseMotion
-		# Conventional aim mapping: horizontal mouse -> yaw, vertical mouse -> pitch.
 		var yaw := motion.relative.x * mouse_sensitivity * (-1.0 if invert_yaw else 1.0)
 		var pitch := motion.relative.y * mouse_sensitivity * (-1.0 if invert_pitch else 1.0)
 		pitch_input.emit(pitch)
 		yaw_input.emit(yaw)
+		
+	elif event is InputEventMouseButton and event.pressed:
+		match event.button_index:
+			MOUSE_BUTTON_WHEEL_UP:
+				camera_zoom_input.emit(1 - zoom_step)
+			MOUSE_BUTTON_WHEEL_DOWN:
+				camera_zoom_input.emit(1 + zoom_step)
+
 
 
 func _physics_process(_delta: float) -> void:

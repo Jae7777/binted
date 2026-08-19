@@ -33,8 +33,6 @@ class_name CameraRig
 @export_group("Zoom")
 ## Scroll wheel dollies the camera in/out by scaling the boom length.
 @export var zoom_enabled: bool = true
-## Fraction of the current zoom added/removed per wheel notch.
-@export var zoom_step: float = 0.1
 ## Closest the wheel can pull in, as a multiple of the base boom length.
 @export var min_zoom: float = 0.4
 ## Furthest the wheel can push out, as a multiple of the base boom length.
@@ -95,20 +93,6 @@ func _ready() -> void:
 	_resolve_scale()
 	_derive_attributes()
 	_collect_exclusions()
-
-
-## Scroll wheel adjusts the zoom target (multiplicative, so each notch feels the
-## same at any distance). Only while gameplay owns the mouse.
-func _unhandled_input(event: InputEvent) -> void:
-	if not zoom_enabled or not GameState.is_gameplay():
-		return
-	if event is InputEventMouseButton and event.pressed:
-		match event.button_index:
-			MOUSE_BUTTON_WHEEL_UP:
-				_zoom_target = clampf(_zoom_target * (1.0 - zoom_step), min_zoom, max_zoom)
-			MOUSE_BUTTON_WHEEL_DOWN:
-				_zoom_target = clampf(_zoom_target * (1.0 + zoom_step), min_zoom, max_zoom)
-
 
 func _physics_process(delta: float) -> void:
 	if target == null:
@@ -254,3 +238,9 @@ func _derive_attributes() -> void:
 		look_ahead = maxf(0.0, -(origin.z + forward.z * travel))
 	else:
 		look_ahead = 0.0
+
+
+func _on_input_controller_camera_zoom_input(value: float) -> void:
+	if not zoom_enabled or not GameState.is_gameplay():
+		return
+	_zoom_target = clampf(_zoom_target * value, min_zoom, max_zoom)

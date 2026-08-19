@@ -71,6 +71,7 @@ texture = ExtResource("7_yceh7")
 expand_mode = 1
 stretch_mode = 5
 
+[connection signal="camera_zoom_input" from="InputController" to="Camera3D" method="_on_input_controller_camera_zoom_input"]
 [connection signal="pitch_input" from="InputController" to="Spacecraft" method="_on_input_controller_pitch_input"]
 [connection signal="roll_input" from="InputController" to="Spacecraft" method="_on_input_controller_roll_input"]
 [connection signal="throttle_input" from="InputController" to="Spacecraft" method="_on_input_controller_throttle_input"]
