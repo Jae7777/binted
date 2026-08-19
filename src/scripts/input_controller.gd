@@ -46,7 +46,7 @@ func _physics_process(_delta: float) -> void:
 	if not GameState.is_gameplay():
 		return
 
-	roll_input.emit(Input.get_axis("roll_left", "roll_right"))
+	roll_input.emit(Input.get_axis("roll_right", "roll_left"))
 	throttle_input.emit(Input.get_axis("throttle_down", "throttle_up"))
 
 	var turbo_now := Input.is_action_pressed("turbo")
