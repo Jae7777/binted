@@ -54,9 +54,10 @@ class_name CameraRig
 @export var collision_return_speed: float = 8.0
 
 @export_group("FOV")
+# fov at ship speed 0
 @export var fov_min: float = 70
+# fov at ship speed max
 @export var fov_max: float = 110
-@export var fov_default: float = 70
 
 ## Captured editor placement, expressed in the target's local frame.
 var _rig_transform: Transform3D
@@ -142,7 +143,7 @@ func _physics_process(delta: float) -> void:
 	
 	# fov effect
 	var fov_speed_ratio = target.runtime_stats.current_speed / target.runtime_stats.base_stats.max_speed
-	fov = clampf(fov_speed_ratio * (fov_max - fov_min) + fov_default, fov_min, fov_max)
+	fov = clampf(fov_speed_ratio * (fov_max - fov_min) + fov_min, fov_min, fov_max)
 
 
 ## Desired boom length in metres for the current ship, after the zoom multiplier.
