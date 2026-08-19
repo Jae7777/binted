@@ -32,14 +32,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		var pitch := motion.relative.y * mouse_sensitivity * (-1.0 if invert_pitch else 1.0)
 		pitch_input.emit(pitch)
 		yaw_input.emit(yaw)
-		
-	elif event is InputEventMouseButton and event.pressed:
-		match event.button_index:
-			MOUSE_BUTTON_WHEEL_UP:
-				camera_zoom_input.emit(1 - zoom_step)
-			MOUSE_BUTTON_WHEEL_DOWN:
-				camera_zoom_input.emit(1 + zoom_step)
-
 
 
 func _physics_process(_delta: float) -> void:
@@ -48,7 +40,12 @@ func _physics_process(_delta: float) -> void:
 
 	roll_input.emit(Input.get_axis("roll_right", "roll_left"))
 	throttle_input.emit(Input.get_axis("throttle_down", "throttle_up"))
-
+	
+	if Input.is_action_just_pressed("camera_zoom_in"):
+		camera_zoom_input.emit(1 - zoom_step)
+	elif Input.is_action_just_pressed("camera_zoom_out"):
+		camera_zoom_input.emit(1 + zoom_step)
+		
 	var turbo_now := Input.is_action_pressed("turbo")
 	if turbo_now != _turbo_active:
 		_turbo_active = turbo_now
