@@ -17,9 +17,6 @@ class_name CameraRig
 @export_group("Feel")
 ## Position follow speed. Higher = snappier; 0 = hard snap.
 @export var position_smoothing: float = 12.0
-## Orientation follow speed. The view eases toward the ship's aim at this rate,
-## so banking rolls the POV a beat later (the aim carries roll too). 0 = instant.
-@export var rotation_smoothing: float = 8.0
 
 @export_group("Framing")
 ## Boom length as a multiple of the ship's bounding radius.
@@ -79,8 +76,6 @@ var _initialized: bool = false
 var _zoom: float = 1.0         ## Eased zoom multiplier applied to the boom.
 var _zoom_target: float = 1.0  ## Where the wheel wants the zoom to settle.
 
-var _cam_basis: Basis = Basis()  ## Eased view orientation trailing the aim.
-
 
 func _ready() -> void:
 	if target == null:
@@ -110,18 +105,7 @@ func _physics_process(delta: float) -> void:
 	else:
 		_zoom = _zoom_target
 
-	# Ease the whole view orientation toward the ship's aim. Because the aim now
-	# carries roll as well, the POV banks a beat after the craft rolls with no
-	# special-casing. The ship keeps its screen spot because the boom rotates
-	# with the same (lagged) frame.
-	var aim := target.get_aim_basis()
-	if not _initialized:
-		_cam_basis = aim
-	elif rotation_smoothing > 0.0:
-		_cam_basis = _cam_basis.slerp(aim, 1.0 - exp(-rotation_smoothing * delta))
-	else:
-		_cam_basis = aim
-	var frame := Transform3D(_cam_basis, target.global_position)
+	var frame := Transform3D(target.get_aim_basis(), target.global_position)
 
 	# Boom length comes from ship size (or the frozen placement when scale is 0).
 	var local_origin := _rig_dir * _boom_length()
@@ -138,7 +122,8 @@ func _physics_process(delta: float) -> void:
 
 	var final_origin := _resolve_collision(target.global_position, _pos, delta)
 
-	# Orientation snaps instantly so the camera always tracks the aim.
+	# Orientation is the smoothed (ship + lead) frame; only the position is
+	# collision-corrected.
 	global_transform = Transform3D(desired.basis, final_origin)
 	
 	# fov effect

@@ -14,10 +14,10 @@ class_name SpacecraftController
 @export var runtime_stats: RuntimeStats
 @export var body: CharacterBody3D
 
-# --- Aim (instant target orientation, driven by the mouse) ---
-## Full body-relative orientation. Yaw/pitch/roll are each integrated in this
-## frame's OWN local axes, so there is no world-up reference and no pitch limit
-## -- true 6DOF. The camera reads this so the view tracks where you point.
+# --- View orientation (what the camera shows, driven by the mouse) ---
+## Full body-relative orientation, integrated in its OWN local axes (true 6DOF:
+## no world-up, no pitch limit). Its turn rate is capped in _update_aim, so this
+## is effectively the camera's facing; the ship springs toward it and trails.
 var aim_basis: Basis = Basis()
 
 # --- Ship attitude (3D spring-chases the aim) ---
@@ -49,14 +49,17 @@ func _physics_process(delta: float) -> void:
 	_apply_thrust(base, delta)
 
 
-## Fold this frame's mouse + roll input into the aim orientation. Each rotation
-## is applied in the aim's OWN local frame, so steering is always relative to
-## where you currently point and how you're banked -- which is exactly what
-## makes roll-then-turn feel natural and removes any need for a pitch clamp or
-## roll compensation. Flip a sign below if an axis feels inverted.
+## Turn the view from this frame's input. The mouse only provides a STEERING
+## DIRECTION -- its magnitude is discarded -- and the view then rotates at the
+## craft's handling rate (yaw_speed/pitch_speed) in that direction. 
 func _update_aim(base: SpacecraftBaseStats, delta: float) -> void:
-	var yaw := -_yaw_delta * base.yaw_speed
-	var pitch := _pitch_delta * base.pitch_speed
+	var steer := Vector2(_yaw_delta, _pitch_delta)
+	var yaw := 0.0
+	var pitch := 0.0
+	if steer.length() > 0.0001:
+		steer = steer.normalized()  # direction only; magnitude (sensitivity) ignored
+		yaw = -steer.x * base.yaw_speed * delta
+		pitch = steer.y * base.pitch_speed * delta
 	var roll := _roll_input * base.roll_speed * delta
 
 	aim_basis = aim_basis * Basis(Vector3.UP, yaw)       # yaw about local up
@@ -137,8 +140,8 @@ func _exp_quat(v: Vector3) -> Quaternion:
 	return Quaternion(v / angle, angle)
 
 
-## The camera reads this to track exactly where you're aiming (full orientation,
-## roll included).
+## The camera reads this: the rate-capped view orientation (roll included). The
+## ship trails it via the spring in _chase_aim.
 func get_aim_basis() -> Basis:
 	return aim_basis
 

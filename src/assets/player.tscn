@@ -42,7 +42,7 @@ mouse_filter = 1
 script = ExtResource("6_cross")
 camera = NodePath("../../Camera3D")
 ship = NodePath("../../Spacecraft")
-dot = NodePath("Dot")
+dot = NodePath("Circle")
 center_crosshair = NodePath("CenterContainer/TextureRect")
 
 [node name="CenterContainer" type="CenterContainer" parent="CanvasLayer/CrosshairUI" unique_id=810140975]
@@ -54,20 +54,20 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="TextureRect" type="TextureRect" parent="CanvasLayer/CrosshairUI/CenterContainer" unique_id=2042799857]
-custom_minimum_size = Vector2(16, 16)
+custom_minimum_size = Vector2(8, 8)
 layout_mode = 2
-texture = ExtResource("5_mxi64")
+texture = ExtResource("7_yceh7")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Dot" type="TextureRect" parent="CanvasLayer/CrosshairUI" unique_id=771903482]
+[node name="Circle" type="TextureRect" parent="CanvasLayer/CrosshairUI" unique_id=771903482]
 modulate = Color(1, 1, 1, 0.75)
-custom_minimum_size = Vector2(8, 8)
+custom_minimum_size = Vector2(20, 20)
 layout_mode = 0
 offset_right = 8.0
 offset_bottom = 8.0
 mouse_filter = 2
-texture = ExtResource("7_yceh7")
+texture = ExtResource("5_mxi64")
 expand_mode = 1
 stretch_mode = 5
 

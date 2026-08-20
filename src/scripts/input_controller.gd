@@ -14,7 +14,6 @@ signal throttle_input(value: float)
 signal turbo_changed(active: bool)
 
 @export_group("Mouse")
-@export var mouse_sensitivity: float = 0.008
 @export var invert_pitch: bool = true
 @export var invert_yaw: bool = false
 @export var zoom_step: float = 0.1
@@ -28,8 +27,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	
 	if event is InputEventMouseMotion:
 		var motion := event as InputEventMouseMotion
-		var yaw := motion.relative.x * mouse_sensitivity * (-1.0 if invert_yaw else 1.0)
-		var pitch := motion.relative.y * mouse_sensitivity * (-1.0 if invert_pitch else 1.0)
+		var yaw := motion.relative.x * (-1.0 if invert_yaw else 1.0)
+		var pitch := motion.relative.y * (-1.0 if invert_pitch else 1.0)
 		pitch_input.emit(pitch)
 		yaw_input.emit(yaw)
 

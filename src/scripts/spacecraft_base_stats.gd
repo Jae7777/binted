@@ -14,10 +14,9 @@ class_name SpacecraftBaseStats
 @export var turbo_multiplier: float = 1.6 ## max_speed multiplier while turbo held.
 
 @export_group("Handling")
-@export var pitch_speed: float = 1.5   ## Multiplier on mouse pitch input (aim rate).
-@export var yaw_speed: float = 1.5     ## Multiplier on mouse yaw input (aim rate).
-@export var roll_speed: float = 2.5    ## Radians/sec of manual roll at full input.
-@export var max_pitch_deg: float = 85.0 ## Clamp so the nose can't flip over the top.
+@export var pitch_speed: float = 1.0   ## View pitch turn rate (rad/sec) while steering.
+@export var yaw_speed: float = 1.0     ## View yaw turn rate (rad/sec) while steering.
+@export var roll_speed: float = 0.8    ## Roll rate at full A/D input (rad/sec).
 
 @export_subgroup("Chase feel")
 ## Higher = the ship snaps to your aim faster (stiffer). Lower = more lag.
