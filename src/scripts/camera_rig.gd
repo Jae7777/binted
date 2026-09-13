@@ -54,7 +54,7 @@ class_name CameraRig
 # fov at ship speed 0
 @export var fov_min: float = 70
 # fov at ship speed max
-@export var fov_max: float = 110
+@export var fov_max: float = 80
 
 ## Captured editor placement, expressed in the target's local frame.
 var _rig_transform: Transform3D

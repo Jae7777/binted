@@ -4,6 +4,9 @@ class_name SpacecraftRuntime
 ## Runtime state for one craft (current speed, health, ...). Seeded from a
 ## SpacecraftBaseStats resource and mutated by the controller (player input)
 ## and the environment (damage, drag). Knows nothing about input itself.
+##
+## Speed is in metres per second throughout -- the unit the base stats are
+## authored in and the unit the engine moves in.
 
 signal speed_changed(speed: float)
 signal health_changed(health: int)
@@ -12,7 +15,7 @@ signal died
 ## The base data this craft was built from. Assign the craft's .tres here.
 @export var base_stats: SpacecraftBaseStats
 
-var current_speed: float
+var current_speed: float  ## Metres per second.
 var current_health: int
 
 
@@ -37,6 +40,7 @@ func apply_throttle(axis: float, turbo: bool, delta: float) -> void:
 		top
 	)
 	speed_changed.emit(current_speed)
+
 
 
 func take_damage(amount: int) -> void:

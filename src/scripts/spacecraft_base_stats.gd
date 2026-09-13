@@ -5,12 +5,16 @@ class_name SpacecraftBaseStats
 ## one .tres file per spacecraft (speeder_a_stats.tres, cruiser_stats.tres, ...)
 ## and tweak the values in the inspector. StatefulStats reads from this to seed
 ## and clamp its runtime values.
+##
+## SPEEDS ARE AUTHORED IN ENGINE UNITS: metres per second, because a Godot world
+## unit is one metre. What you type is what the craft moves at -- there is no
+## conversion anywhere between this resource and the physics.
 
-@export_group("Speed")
-@export var min_speed: float = 0  ## Standstill
-@export var max_speed: float = 40.0    ## Forward cap before turbo.
+@export_group("Speed (m/s)")
+@export var min_speed: float = 0.0     ## Standstill
+@export var max_speed: float = 5.56    ## Forward cap before turbo.
 @export var base_speed: float = 0.0    ## Speed the craft spawns with.
-@export var acceleration: float = 20.0 ## Units/sec added per full throttle.
+@export var acceleration: float = 20.0 ## Metres/sec gained per second at full throttle.
 @export var turbo_multiplier: float = 1.6 ## max_speed multiplier while turbo held.
 
 @export_group("Handling")

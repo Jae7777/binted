@@ -34,7 +34,7 @@ func _on_runtime_fired() -> void:
 	# Shots belong to the world, not to the barrel: parenting them here would
 	# drag every shot along as the craft flies on.
 	get_tree().current_scene.add_child(projectile)
-	projectile.launch(global_transform, base.speed, base.damage, base.range, shooter)
+	projectile.launch(global_transform, base.speed, base.damage, base.travel_range, shooter)
 
 
 ## The craft this muzzle is mounted on, so its own hull can be ignored. A weapon

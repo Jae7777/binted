@@ -34,8 +34,9 @@ func _ready() -> void:
 	set_physics_process(false)
 
 
-## Arm and fire this shot. Add it to the tree FIRST -- the muzzle transform is a
-## global one, and gives both the launch point and the direction of travel.
+## Arm and fire this shot, at `speed` metres per second for `max_range` metres.
+## Add it to the tree FIRST -- the muzzle transform is a global one, and gives
+## both the launch point and the direction of travel.
 ## `shooter` is the craft that fired: every collider under it is excluded, so a
 ## ship never shoots itself as the shot leaves the barrel.
 func launch(muzzle_transform: Transform3D, speed: float, damage: float,
