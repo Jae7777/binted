@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://c82oo066v72g0"]
 
 [ext_resource type="PackedScene" uid="uid://bk1f2jhgqkpa8" path="res://assets/ships/groza/groza.glb" id="1_q0kpd"]
-[ext_resource type="Script" uid="uid://dhjyl2ej640us" path="res://scripts/spacecraft_runtime_stats.gd" id="2_aadyv"]
+[ext_resource type="Script" uid="uid://dhjyl2ej640us" path="res://scripts/spacecraft_runtime.gd" id="2_aadyv"]
 [ext_resource type="Resource" uid="uid://bqtifnxrnrab" path="res://assets/ships/groza/groza.tres" id="3_mhh0p"]
 [ext_resource type="Script" uid="uid://btvm4iqkp3bx6" path="res://scripts/jet_flame.gd" id="4_m7ejn"]
 [ext_resource type="Texture2D" uid="uid://c6e3f1aph1s8x" path="res://assets/vfx/t_fire01.png" id="4_ptg1r"]
@@ -132,14 +132,14 @@ shape = SubResource("ConvexPolygonShape3D_m7ejn")
 transform = Transform3D(0.7254729, 0, 0, 0, 0, -0.7254729, 0, 0.7254729, 0, 0, 0, 0)
 shape = SubResource("ConvexPolygonShape3D_mymw7")
 
-[node name="RuntimeStats" type="Node" parent="." index="2" unique_id=701423252]
+[node name="Runtime" type="Node" parent="." index="2" unique_id=701423252]
 script = ExtResource("2_aadyv")
 base_stats = ExtResource("3_mhh0p")
 
 [node name="JetFlame" type="Node3D" parent="." index="3" unique_id=1178105368 node_paths=PackedStringArray("runtime_stats", "flames", "light")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.1077194e-07, 0.08125919, -2.41095)
 script = ExtResource("4_m7ejn")
-runtime_stats = NodePath("../RuntimeStats")
+runtime_stats = NodePath("../Runtime")
 flames = NodePath("Flames")
 light = NodePath("OmniLight3D")
 

@@ -11,7 +11,7 @@ class_name SpacecraftController
 
 ## Runtime stats for this craft (seeded from the base .tres). Assign in the
 ## Inspector; the node lives inside the craft sub-scene.
-@export var runtime_stats: RuntimeStats
+@export var runtime_stats: SpacecraftRuntime
 @export var body: CharacterBody3D
 
 # --- View orientation (what the camera shows, driven by the mouse) ---

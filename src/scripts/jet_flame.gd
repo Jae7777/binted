@@ -1,6 +1,6 @@
 extends Node3D
 
-@export var runtime_stats: RuntimeStats
+@export var runtime_stats: SpacecraftRuntime
 @export var flames: GPUParticles3D
 @export var light: OmniLight3D
 

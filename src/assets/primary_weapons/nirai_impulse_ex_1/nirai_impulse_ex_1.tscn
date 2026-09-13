@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://1fa0x1infshh"]
+
+[ext_resource type="Script" uid="uid://bn17toects67y" path="res://scripts/primary_weapon_runtime.gd" id="1_8ana3"]
+[ext_resource type="Resource" uid="uid://dds24ajvm6fap" path="res://assets/primary_weapons/nirai_impulse_ex_1/nirai_impulse_ex_1.tres" id="2_vu7xg"]
+[ext_resource type="Script" uid="uid://c011appctyl1q" path="res://scripts/primary_weapon_muzzle.gd" id="3_ogwqs"]
+
+[node name="NiraiImpulseEx1" type="Node3D" unique_id=2039334400]
+
+[node name="Runtime" type="Node" parent="." unique_id=1643856348]
+script = ExtResource("1_8ana3")
+primary_weapon_base_stats = ExtResource("2_vu7xg")
+
+[node name="Muzzle" type="Node3D" parent="." unique_id=555586024 node_paths=PackedStringArray("runtime")]
+script = ExtResource("3_ogwqs")
+runtime = NodePath("../Runtime")
+
+[connection signal="fired" from="Runtime" to="Muzzle" method="_on_runtime_fired"]

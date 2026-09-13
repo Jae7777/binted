@@ -12,6 +12,7 @@ signal yaw_input(value: float)
 signal roll_input(value: float)
 signal throttle_input(value: float)
 signal turbo_changed(active: bool)
+signal primary_fire_changed(active: bool)
 
 @export_group("Mouse")
 @export var invert_pitch: bool = true
@@ -19,6 +20,7 @@ signal turbo_changed(active: bool)
 @export var zoom_step: float = 0.1
 
 var _turbo_active: bool = false
+var _primary_fire_active: bool = false
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -35,6 +37,10 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _physics_process(_delta: float) -> void:
 	if not GameState.is_gameplay():
+		# Release whatever is held, so leaving gameplay mid-hold doesn't leave
+		# the craft boosting or the guns firing forever.
+		_set_turbo(false)
+		_set_primary_fire(false)
 		return
 
 	roll_input.emit(Input.get_axis("roll_right", "roll_left"))
@@ -45,11 +51,28 @@ func _physics_process(_delta: float) -> void:
 	elif Input.is_action_just_pressed("camera_zoom_out"):
 		camera_zoom_input.emit(1 + zoom_step)
 		
-	var turbo_now := Input.is_action_pressed("turbo")
-	if turbo_now != _turbo_active:
-		_turbo_active = turbo_now
-		turbo_changed.emit(_turbo_active)
+	_set_turbo(Input.is_action_pressed("turbo"))
+	_set_primary_fire(Input.is_action_pressed("primary_fire"))
 
 
 func is_turbo_active() -> bool:
 	return _turbo_active
+
+
+func is_primary_fire_active() -> bool:
+	return _primary_fire_active
+
+
+## Held states are emitted on change only, so consumers can treat them as edges.
+func _set_turbo(active: bool) -> void:
+	if active == _turbo_active:
+		return
+	_turbo_active = active
+	turbo_changed.emit(_turbo_active)
+
+
+func _set_primary_fire(active: bool) -> void:
+	if active == _primary_fire_active:
+		return
+	_primary_fire_active = active
+	primary_fire_changed.emit(_primary_fire_active)
