@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://beagecg7onbg0"]
+
+[ext_resource type="PackedScene" uid="uid://bk1f2jhgqkpa8" path="res://assets/ships/groza/groza.glb" id="1_cve1s"]
+
+[node name="GrozaInherited" unique_id=171619677 instance=ExtResource("1_cve1s")]

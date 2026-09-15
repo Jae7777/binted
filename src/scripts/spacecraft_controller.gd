@@ -7,7 +7,12 @@ class_name SpacecraftController
 ##   * SHIP   - the craft's actual facing. Chases AIM through an under-damped
 ##              spring, so it lags and wobbles (the intentional delay/shake),
 ##              then thrusts along its own nose.
-## Input signals are connected to the _on_* handlers in the editor (player.tscn).
+##
+## Pilot intent enters through the command surface near the bottom of this file
+## -- steer/roll/throttle/turbo/fire. The craft does not care who is issuing the
+## commands: player input, an AI brain or a replay all drive the same methods.
+## The _on_* handlers below them exist so the player's InputController can be
+## wired to the craft in the editor (visible wires).
 
 ## Runtime stats for this craft (seeded from the base .tres). Assign in the
 ## Inspector; the node lives inside the craft sub-scene.
@@ -31,11 +36,24 @@ var _turbo: bool = false
 var _pitch_delta: float = 0.0  ## Mouse pitch accumulated since last frame.
 var _yaw_delta: float = 0.0    ## Mouse yaw accumulated since last frame.
 
+## Weapon mounts carried by this craft. Found rather than exported: they live
+## inside the ship sub-scene, which the player scene has no node path into, so
+## fire intent is wired to the craft and passed inward from here.
+var _weapon_mounts: Array[PrimaryWeaponController] = []
+
 
 func _ready() -> void:
 	# Seed both orientations from wherever the craft is placed in the scene.
 	aim_basis = global_transform.basis.orthonormalized()
 	_basis = aim_basis
+	collect_weapon_mounts()
+
+
+## Re-scan the craft for weapon mounts. Call after bolting one on at runtime.
+func collect_weapon_mounts() -> void:
+	_weapon_mounts.clear()
+	for node in find_children("*", "PrimaryWeaponController", true, false):
+		_weapon_mounts.append(node as PrimaryWeaponController)
 
 
 func _physics_process(delta: float) -> void:
@@ -150,21 +168,62 @@ func get_aim_basis() -> Basis:
 func get_turn_speed() -> float:
 	return _ang_vel.length()
 
-func _on_input_controller_pitch_input(value: float) -> void:
-	_pitch_delta += value
+# --- Pilot commands ----------------------------------------------------------
+# This craft's control surface. Steering is ACCUMULATED (several samples can
+# arrive between physics frames and are consumed together); the rest are held
+# states that stay until changed.
+
+## Steer by a relative amount. Only the DIRECTION of the accumulated steering is
+## used -- see _update_aim -- so the magnitude is a sampling artefact, not a rate.
+func add_steering(yaw: float, pitch: float) -> void:
+	_yaw_delta += yaw
+	_pitch_delta += pitch
 
 
-func _on_input_controller_roll_input(value: float) -> void:
-	_roll_input = value
+## Roll rate as a -1..1 axis, scaled by the craft's roll_speed.
+func set_roll(axis: float) -> void:
+	_roll_input = axis
 
 
-func _on_input_controller_throttle_input(value: float) -> void:
-	_throttle = value
+## Throttle as a -1..1 axis: accelerate, coast, decelerate.
+func set_throttle(axis: float) -> void:
+	_throttle = axis
 
 
-func _on_input_controller_turbo_changed(active: bool) -> void:
+func set_turbo(active: bool) -> void:
 	_turbo = active
 
 
+## Hold or release the trigger on every gun this craft carries. A craft with no
+## mounts simply ignores it.
+func set_firing(active: bool) -> void:
+	for mount in _weapon_mounts:
+		mount.set_firing(active)
+
+
+# --- Editor wiring -----------------------------------------------------------
+# Thin adapters so the player's InputController can be connected to the craft in
+# the Inspector. They add no behaviour: everything lives in the commands above.
+
+func _on_input_controller_pitch_input(value: float) -> void:
+	add_steering(0.0, value)
+
+
 func _on_input_controller_yaw_input(value: float) -> void:
-	_yaw_delta += value
+	add_steering(value, 0.0)
+
+
+func _on_input_controller_roll_input(value: float) -> void:
+	set_roll(value)
+
+
+func _on_input_controller_throttle_input(value: float) -> void:
+	set_throttle(value)
+
+
+func _on_input_controller_turbo_changed(active: bool) -> void:
+	set_turbo(active)
+
+
+func _on_input_controller_primary_fire_changed(active: bool) -> void:
+	set_firing(active)

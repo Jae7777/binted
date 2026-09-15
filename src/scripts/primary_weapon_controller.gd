@@ -44,8 +44,15 @@ func _push_trigger() -> void:
 		weapon.set_trigger_held(_trigger_held)
 
 
-func _on_input_controller_primary_fire_changed(active: bool) -> void:
+## Hold or release the trigger on every mounted weapon. Pilot intent arrives
+## here either straight from the input signal or relayed by the craft, when the
+## mount lives inside a ship sub-scene the player scene cannot wire into.
+func set_firing(active: bool) -> void:
 	if _trigger_held == active:
 		return
 	_trigger_held = active
 	_push_trigger()
+
+
+func _on_input_controller_primary_fire_changed(active: bool) -> void:
+	set_firing(active)

@@ -1,41 +1,24 @@
 [gd_scene format=3 uid="uid://csn7rtpkn7i2n"]
 
-[ext_resource type="PackedScene" uid="uid://c82oo066v72g0" path="res://assets/ships/groza/groza.tscn" id="2_yceh7"]
-[ext_resource type="Script" uid="uid://cw8qut2vyu5qw" path="res://scripts/spacecraft_controller.gd" id="3_ctrl"]
+[ext_resource type="PackedScene" uid="uid://5gwgaau6af1k" path="res://assets/ships/groza/groza.tscn" id="2_yceh7"]
 [ext_resource type="Script" uid="uid://bhdlpplmuym51" path="res://scripts/input_controller.gd" id="4_input"]
 [ext_resource type="Script" uid="uid://doijh17joe8fq" path="res://scripts/camera_rig.gd" id="5_cam"]
 [ext_resource type="Texture2D" uid="uid://cv7pryt44p8nh" path="res://assets/ui/circle.svg" id="5_mxi64"]
 [ext_resource type="Script" uid="uid://1uf35gv2rvrk" path="res://scripts/crosshair.gd" id="6_cross"]
 [ext_resource type="Texture2D" uid="uid://bcmq0a561b2rl" path="res://assets/ui/dot.svg" id="7_yceh7"]
-[ext_resource type="Script" uid="uid://c0gntjwrcnb2i" path="res://scripts/primary_weapon_controller.gd" id="8_jeibo"]
-[ext_resource type="PackedScene" uid="uid://1fa0x1infshh" path="res://assets/primary_weapons/nirai_impulse_ex_1/nirai_impulse_ex_1.tscn" id="9_cn88q"]
 
 [node name="Player" type="Node3D" unique_id=759221089]
 
-[node name="Spacecraft" type="Node3D" parent="." unique_id=1545159733 node_paths=PackedStringArray("runtime_stats", "body")]
-script = ExtResource("3_ctrl")
-runtime_stats = NodePath("Groza/Runtime")
-body = NodePath("Groza/Body")
-
-[node name="Groza" parent="Spacecraft" unique_id=726696384 instance=ExtResource("2_yceh7")]
-
-[node name="PrimaryWeaponSlots" type="Node3D" parent="Spacecraft" unique_id=1409432910]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.053631485, -5.4838953)
-script = ExtResource("8_jeibo")
-
-[node name="NiraiImpulseEx1" parent="Spacecraft/PrimaryWeaponSlots" unique_id=2039334400 instance=ExtResource("9_cn88q")]
+[node name="Groza" parent="." unique_id=1773193405 instance=ExtResource("2_yceh7")]
 
 [node name="InputController" type="Node" parent="." unique_id=182834421]
 script = ExtResource("4_input")
-
-[node name="ForwardFacingPoint" type="Node3D" parent="." unique_id=1689718366]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.31059802, -1.0709959)
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1826354701 node_paths=PackedStringArray("target")]
 transform = Transform3D(1, 0, 0, 0, 0.9999894, 0.0046126847, 0, -0.0046126847, 0.9999894, 0, 3.6244988, 12.937551)
 current = true
 script = ExtResource("5_cam")
-target = NodePath("../Spacecraft")
+target = NodePath("../Groza")
 min_zoom = 0.8
 max_zoom = 1.5
 
@@ -51,7 +34,7 @@ grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("6_cross")
 camera = NodePath("../../Camera3D")
-ship = NodePath("../../Spacecraft")
+ship = NodePath("../../Groza")
 dot = NodePath("Circle")
 center_crosshair = NodePath("CenterContainer/TextureRect")
 
@@ -82,9 +65,9 @@ expand_mode = 1
 stretch_mode = 5
 
 [connection signal="camera_zoom_input" from="InputController" to="Camera3D" method="_on_input_controller_camera_zoom_input"]
-[connection signal="pitch_input" from="InputController" to="Spacecraft" method="_on_input_controller_pitch_input"]
-[connection signal="primary_fire_changed" from="InputController" to="Spacecraft/PrimaryWeaponSlots" method="_on_input_controller_primary_fire_changed"]
-[connection signal="roll_input" from="InputController" to="Spacecraft" method="_on_input_controller_roll_input"]
-[connection signal="throttle_input" from="InputController" to="Spacecraft" method="_on_input_controller_throttle_input"]
-[connection signal="turbo_changed" from="InputController" to="Spacecraft" method="_on_input_controller_turbo_changed"]
-[connection signal="yaw_input" from="InputController" to="Spacecraft" method="_on_input_controller_yaw_input"]
+[connection signal="pitch_input" from="InputController" to="Groza" method="_on_input_controller_pitch_input"]
+[connection signal="primary_fire_changed" from="InputController" to="Groza" method="_on_input_controller_primary_fire_changed"]
+[connection signal="roll_input" from="InputController" to="Groza" method="_on_input_controller_roll_input"]
+[connection signal="throttle_input" from="InputController" to="Groza" method="_on_input_controller_throttle_input"]
+[connection signal="turbo_changed" from="InputController" to="Groza" method="_on_input_controller_turbo_changed"]
+[connection signal="yaw_input" from="InputController" to="Groza" method="_on_input_controller_yaw_input"]
