@@ -2,6 +2,8 @@
 
 [ext_resource type="PackedScene" uid="uid://csn7rtpkn7i2n" path="res://assets/player.tscn" id="1_n14wq"]
 [ext_resource type="Texture2D" uid="uid://crs77sjlkph1i" path="res://assets/sky/space.png" id="2_er2aq"]
+[ext_resource type="Script" uid="uid://jpxfq2uqbhuc" path="res://scripts/enemy_spawner.gd" id="3_7j6rp"]
+[ext_resource type="PackedScene" uid="uid://5gwgaau6af1k" path="res://assets/ships/groza/groza.tscn" id="4_xenob"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_0ajmy"]
 panorama = ExtResource("2_er2aq")
@@ -21,3 +23,8 @@ sky = SubResource("Sky_anp1u")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=804876664]
 environment = SubResource("Environment_slkoe")
+
+[node name="EnemySpawner" type="Node3D" parent="." unique_id=1880271790]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.80378723)
+script = ExtResource("3_7j6rp")
+ship_scenes = Array[PackedScene]([ExtResource("4_xenob")])
